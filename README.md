@@ -14,10 +14,10 @@ For more information about efaLive, have a look to the efaLive documentation on 
 * [efa](http://efa.nmichael.de/) - the rowing and canoeing log book software
 
 ##Requirements
-You need to have Docker installed on your system.
+You need to have Docker installed on your system. To develop and build an efaLive image, you need to clone the efaLive Docker, efaLive CD, efaLive and efa 2 projects to some directory on your PC. This directory is used later on for the Docker container.
 
 ##How to build
-Change to the project directory and run the following command:
+Change to the efaLive Docker project directory and run the following command:
 
 ```shell
 docker build -t efalive/efalive-dev:jessie .
@@ -48,3 +48,10 @@ To re-start it use
 docker start -ai efalive-dev
 ```
 
+Now you can build for example a efaLive image using the following commands:
+
+```shell
+cd development/efalive_cd
+sudo lb clean
+sudo lb build
+```
