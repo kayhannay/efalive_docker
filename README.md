@@ -20,7 +20,7 @@ You need to have Docker installed on your system. To develop and build an efaLiv
 Change to the efaLive Docker project directory and run the following command:
 
 ```shell
-docker build -t efalive/efalive-dev:jessie .
+docker build -t efalive/efalive-dev:buster .
 ```
 
 You of course might change the tag name in the command above to your wishes, it is just an example.
@@ -29,7 +29,7 @@ You of course might change the tag name in the command above to your wishes, it 
 Run the docker container by using the following command:
 
 ```shell
-docker run -it -v <PATH_TO_EFALIVE_REPOSITORIES>:/home/efalive/development --name efalive-dev --privileged=true efalive/efalive-dev:jessie
+docker run -it -v <PATH_TO_EFALIVE_REPOSITORIES>:/home/efalive/development --name efalive-dev --privileged=true efalive/efalive-dev:buster
 ```
 
 Replace <PATH_TO_EFALIVE_REPOSITORIES> with the name of the folder where you have cloned or will clone the efaLive projects to. Again, you can replace the name for the container and the tag to whatever you want.
