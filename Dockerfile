@@ -12,16 +12,16 @@ RUN apt update \
 
 RUN pip3 install pipenv
 
-RUN useradd -m -G sudo efalive && echo 'efalive:efalive' | chpasswd && chown efalive /home/efalive
+#RUN useradd -m -G sudo efalive && echo 'efalive:efalive' | chpasswd && chown efalive /home/efalive
 
-RUN echo "efalive ALL=NOPASSWD: /etc/init.d/apt-cacher-ng start" >> /etc/sudoers
+#RUN echo "efalive ALL=NOPASSWD: /etc/init.d/apt-cacher-ng start" >> /etc/sudoers
 
 VOLUME ["/home/efalive/development"]
 
-USER efalive
+#USER efalive
 
-WORKDIR /home/efalive
+#WORKDIR /home/efalive
 
-ENV PATH "/home/efalive/.local/bin:$PATH"
+#ENV PATH "/home/efalive/.local/bin:$PATH"
 
-CMD /bin/bash -c "sudo /etc/init.d/apt-cacher-ng start" && /bin/bash
+#CMD /bin/bash -c "sudo /etc/init.d/apt-cacher-ng start" && /bin/bash
