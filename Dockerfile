@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
-COPY files/deploy_repository.sh /usr/bin
+COPY files/deploy_registry.sh /usr/bin
 
 RUN echo "deb http://ftp.de.debian.org/debian buster main" > /etc/apt/sources.list && echo "deb http://ftp.de.debian.org/debian buster-updates main" >> /etc/apt/sources.list && echo "deb http://security.debian.org buster/updates main" >> /etc/apt/sources.list
 
