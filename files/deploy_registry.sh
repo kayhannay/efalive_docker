@@ -33,12 +33,12 @@ if [ -z "${FTP_SECRET}" ]; then
     exit 1
 fi
 
-lftp -e "mirror --verbose=2 -n debian repository && bye" --user "${FTP_USER}" --password "${FTP_SECRET}" ftp://wp1152936.server-he.de
+lftp -e "mirror -n debian repository && bye" --user "${FTP_USER}" --password "${FTP_SECRET}" ftp://wp1152936.server-he.de
 
 cd repository
 reprepro remove $VERSION $SOFTWARE
 reprepro -Vb . includedeb $VERSION ../$PACKAGE
 cd ..
 
-lftp -e "mirror -R --verbose=2 -n repository debian && bye" -u "${FTP_USER}","${FTP_SECRET}" ftp://wp1152936.server-he.de
+lftp -e "mirror -R -n repository debian && bye" -u "${FTP_USER}","${FTP_SECRET}" ftp://wp1152936.server-he.de
 
