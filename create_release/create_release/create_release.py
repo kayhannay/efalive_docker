@@ -6,7 +6,7 @@ from git import Repo
 
 
 def get_file_version(path: str) -> str:
-    with open(os.path.join(path, 'efa2', 'VERSION')) as version_file:
+    with open(os.path.join(path, 'VERSION')) as version_file:
         version = version_file.readline().strip().replace('_', '.')
         print(f'Version from file is: {version}')
         return version
@@ -28,19 +28,41 @@ def create_release(path: str):
         new_release = f'{file_version}-1'
     if len(relevant_commits) > 0:
         print(f'New release is: {new_release}')
-        changelog = create_changelog(new_release, relevant_commits)
+        changelog = create_changelog_entry(new_release, relevant_commits)
         print(f'{changelog}')
+        create_changelog(path, changelog)
     else:
         print('Skip release since there are no release relevant commits.')
 
 
-def create_changelog(version: str, commits: [str]):
+def commit_and_push(repo: Repo, version: str):
+    repo.git.commit('-m',
+                    f'ci: create release {version}',
+                    author='create_release <klinux@hannay.de>')
+    repo.git.push('-u', 'origin', 'HEAD:main')
+    repo.git.push('-u', 'origin', '--tags')
+
+
+def create_tag(repo: Repo, version: str):
+    repo.create_tag(version)
+
+
+def create_changelog_entry(version: str, commits: [str]):
     changelog = f'efa2 ({version}) unstable; urgency=low\n\n'
     for commit in commits:
-        changelog = f'{changelog}  * {commit}\n'
+        changelog = f'{changelog}  * {commit}'
     date = datetime.now().astimezone().strftime('%a, %d %b %Y %H:%M:%S %z')
     changelog = f'{changelog}\n -- Kay Hannay <klinux@hannay.de>  {date}'
     return changelog
+
+
+def create_changelog(path: str, entry: str):
+    changelog_file = os.path.join(path, 'debian', 'changelog')
+    with open(changelog_file, 'r') as original:
+        existing_changelog = original.read()
+    new_changelog = f'{entry}\n\n{existing_changelog}'
+    with open(changelog_file, 'w') as modified:
+        modified.write(new_changelog)
 
 
 def get_relevant_commits(repo: Repo) -> [str]:
