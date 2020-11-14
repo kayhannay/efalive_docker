@@ -1,5 +1,6 @@
 from datetime import datetime
 import builtins
+from unittest import mock
 
 from git import Commit
 from create_release import create_release
@@ -36,6 +37,35 @@ def test_create_changelog_entry():
 
     # Then
     assert expected_changelog in result
+
+
+def test_create_changelog(mocker):
+    # Given
+    existing_content = 'Latest entry in changelog'
+    date = datetime.now().astimezone().strftime('%a, %d %b %Y ')
+    new_entry = f'efa2 (1.2.3-4) unstable; urgency=low\n\n' + \
+        f'  * fix: some nice change\n' + \
+        f' -- Kay Hannay <klinux@hannay.de>  {date}'
+    file_mock = mocker.patch.object(builtins, 'open', mocker.mock_open(read_data=existing_content))
+
+    # When
+    create_release.create_changelog('/some/path', new_entry)
+
+    # Then
+    expected_calls = [
+        mock.call('/some/path/debian/changelog', 'r'),
+        mock.call().__enter__(),
+        mock.call().read(),
+        mock.call().__exit__(None, None, None),
+        mock.call('/some/path/debian/changelog', 'w'),
+        mock.call().__enter__(),
+        mock.call().write('efa2 (1.2.3-4) unstable; urgency=low\n\n'
+                          '  * fix: some nice change\n'
+                          ' -- Kay Hannay <klinux@hannay.de>  Sat, 14 Nov 2020 \n\n'
+                          'Latest entry in changelog'),
+        mock.call().__exit__(None, None, None)
+    ]
+    assert file_mock.mock_calls == expected_calls
 
 
 def test_get_relevant_commits(mocker):
@@ -76,3 +106,31 @@ def test_get_relevant_commits_empty(mocker):
 
     # Then
     assert len(result) == 0
+
+
+def test_create_tag(mocker):
+    # Given
+    version = '1.2.3-4'
+    repo_mock = mocker.patch('git.Repo')
+
+    # When
+    create_release.create_tag(repo_mock, version)
+
+    # Then
+    repo_mock.create_tag.assert_called_once_with(version)
+
+
+def test_commit_and_push(mocker):
+    # Given
+    version = '1.2.3-4'
+    repo_mock = mocker.patch('git.Repo')
+
+    # When
+    create_release.commit_and_push(repo_mock, version)
+
+    # Then
+    expected_calls = [mock.call.git.commit(
+        '-m', f'ci: create release {version}', author='create_release <klinux@hannay.de>'),
+        mock.call.git.push('-u', 'origin', 'HEAD:main'),
+        mock.call.git.push('-u', 'origin', '--tags')]
+    assert repo_mock.mock_calls == expected_calls
