@@ -42,10 +42,9 @@ def test_create_changelog_entry():
 def test_create_changelog(mocker):
     # Given
     existing_content = 'Latest entry in changelog'
-    date = datetime.now().astimezone().strftime('%a, %d %b %Y ')
     new_entry = f'efa2 (1.2.3-4) unstable; urgency=low\n\n' + \
         f'  * fix: some nice change\n' + \
-        f' -- Kay Hannay <klinux@hannay.de>  {date}'
+        f' -- Kay Hannay <klinux@hannay.de>  Sun, 15 Nov 2020'
     file_mock = mocker.patch.object(builtins, 'open', mocker.mock_open(read_data=existing_content))
 
     # When
@@ -53,19 +52,13 @@ def test_create_changelog(mocker):
 
     # Then
     expected_calls = [
-        mock.call('/some/path/debian/changelog', 'r'),
-        mock.call().__enter__(),
-        mock.call().read(),
-        mock.call().__exit__(None, None, None),
         mock.call('/some/path/debian/changelog', 'w'),
-        mock.call().__enter__(),
-        mock.call().write('efa2 (1.2.3-4) unstable; urgency=low\n\n'
-                          '  * fix: some nice change\n'
-                          ' -- Kay Hannay <klinux@hannay.de>  Sat, 14 Nov 2020 \n\n'
-                          'Latest entry in changelog'),
-        mock.call().__exit__(None, None, None)
+        mock.call('/some/path/debian/changelog', 'r')
     ]
-    assert file_mock.mock_calls == expected_calls
+    file_mock.assert_has_calls(expected_calls, any_order=True)
+    handle = file_mock()
+    handle.write.assert_called_once_with(f'{new_entry}\n\n'
+                                         'Latest entry in changelog'),
 
 
 def test_get_relevant_commits(mocker):
@@ -134,3 +127,16 @@ def test_commit_and_push(mocker):
         mock.call.git.push('-u', 'origin', 'HEAD:main'),
         mock.call.git.push('-u', 'origin', '--tags')]
     assert repo_mock.mock_calls == expected_calls
+
+
+def test_create_release_file(mocker):
+    # Given
+    file_mock = mocker.patch('builtins.open', mocker.mock_open())
+
+    # When
+    create_release.create_release_file('/some/path', '1.2.3-4', 'true')
+
+    # Then
+    file_mock.assert_called_once_with('/some/path/release_info.sh', 'w')
+    handle = file_mock()
+    handle.write.assert_called_once_with('VERSION=1.2.3-4\nCREATE_RELEASE=true')

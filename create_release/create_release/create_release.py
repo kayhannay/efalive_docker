@@ -29,10 +29,18 @@ def create_release(path: str):
     if len(relevant_commits) > 0:
         print(f'New release is: {new_release}')
         changelog = create_changelog_entry(new_release, relevant_commits)
-        print(f'{changelog}')
         create_changelog(path, changelog)
+        create_tag(repo, new_release)
+        commit_and_push(repo, new_release)
+        create_release_file(path, new_release, 'true')
     else:
         print('Skip release since there are no release relevant commits.')
+        create_release_file(path, f'{last_version_release}-{last_version_package}', 'false')
+
+
+def create_release_file(path: str, version: str, release: str):
+    with open(os.path.join(path, 'release_info.sh'), 'w') as release_file:
+        release_file.write(f'VERSION={version}\nCREATE_RELEASE={release}')
 
 
 def commit_and_push(repo: Repo, version: str):
