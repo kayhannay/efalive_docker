@@ -4,4 +4,5 @@ __pycache__
 *.egg-info
 .coverage
 create_release/report
+dist
 
