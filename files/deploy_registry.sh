@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-FTP_USER="${1}"
-FTP_SECRET="${2}"
+SSH_USER="${1}"
+SSH_HOST="${2}"
 DISTRIBUTION="${3}"
 SOFTWARE="${4}"
 VERSION="${5}"
@@ -18,13 +18,13 @@ if [ "${CREATE_RELEASE}" != "true" ]; then
     exit 0
 fi
 
-if [ -z "${FTP_USER}" ]; then
-    echo "First parameter FTP_USER is missing!"
+if [ -z "${SSH_USER}" ]; then
+    echo "First parameter SSH_USER is missing!"
     exit 1
 fi
 
-if [ -z "${FTP_SECRET}" ]; then
-    echo "Second parameter FTP_SECRET is missing!"
+if [ -z "${SSH_HOST}" ]; then
+    echo "Second parameter SSH_HOST is missing!"
     exit 1
 fi
 
@@ -45,12 +45,12 @@ fi
 
 PACKAGE="${SOFTWARE}_${VERSION}_all.deb"
 
-lftp -e "mirror -n debian repository && bye" --user "${FTP_USER}" --password "${FTP_SECRET}" ftp://wp1152936.server-he.de
+rsync -rltv --delete -e ssh ${SSH_USER}@${SSH_HOST}:efalive.hannay.de/debian/ repository/
 
 cd repository
 reprepro remove $DISTRIBUTION $SOFTWARE
 reprepro -Vb . includedeb $DISTRIBUTION ../$PACKAGE
 cd ..
 
-lftp -e "mirror -R -n repository debian && bye" -u "${FTP_USER}","${FTP_SECRET}" ftp://wp1152936.server-he.de
+rsync -rltv --delete -e ssh repository/ ${SSH_USER}@${SSH_HOST}:efalive.hannay.de/debian/
 
