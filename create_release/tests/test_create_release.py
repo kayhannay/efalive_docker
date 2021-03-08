@@ -122,7 +122,8 @@ def test_commit_and_push(mocker):
     create_release.commit_and_push(repo_mock, version)
 
     # Then
-    expected_calls = [mock.call.git.commit(
+    expected_calls = [mock.call.git.add('.'),
+        mock.call.git.commit(
         '-m', f'ci: create release {version}', author='create_release <klinux@hannay.de>'),
         mock.call.git.push('-u', 'origin', 'HEAD:main'),
         mock.call.git.push('-u', 'origin', '--tags')]
