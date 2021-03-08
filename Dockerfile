@@ -11,7 +11,7 @@ COPY files/create_release-0.1.0-py3-none-any.whl /tmp
 RUN echo "deb http://ftp.de.debian.org/debian buster main" > /etc/apt/sources.list && echo "deb http://ftp.de.debian.org/debian buster-updates main" >> /etc/apt/sources.list && echo "deb http://security.debian.org buster/updates main" >> /etc/apt/sources.list
 
 RUN apt update \
-    && apt install -y lftp apt-cacher-ng vim git live-build texlive-lang-german texlive-latex-base texlive-latex-extra texlive-latex-recommended python3 python3-pip python3-pkgconfig docbook-to-man devscripts dpkg-dev reprepro sudo libgirepository1.0-dev libglib2.0-dev libcairo2-dev libffi-dev gir1.2-gtk-3.0
+    && apt install -y lftp rsync apt-cacher-ng vim git live-build texlive-lang-german texlive-latex-base texlive-latex-extra texlive-latex-recommended python3 python3-pip python3-pkgconfig docbook-to-man devscripts dpkg-dev reprepro sudo libgirepository1.0-dev libglib2.0-dev libcairo2-dev libffi-dev gir1.2-gtk-3.0
 
 RUN pip3 install pipenv /tmp/create_release-0.1.0-py3-none-any.whl
 
