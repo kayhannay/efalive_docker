@@ -20,7 +20,7 @@ def create_release(path: str):
     (last_version_release, last_version_package) = f'{latest_tag}'.split('-')
     print(f'Latest tag is: {latest_tag}')
 
-    relevant_commits = get_relevant_commits(repo)
+    relevant_commits = get_relevant_commits(repo, latest_tag)
 
     file_version = get_file_version(path)
     if file_version == last_version_release:
@@ -75,8 +75,8 @@ def create_changelog(path: str, entry: str):
         modified.write(new_changelog)
 
 
-def get_relevant_commits(repo: Repo) -> [str]:
-    commits = repo.iter_commits(rev=f'{repo.tags[0]}..HEAD')
+def get_relevant_commits(repo: Repo, latest_tag: str) -> [str]:
+    commits = repo.iter_commits(rev=f'{latest_tag}..HEAD')
     relevant_commits: [str] = []
     for commit in commits:
         commit_message = commit.message

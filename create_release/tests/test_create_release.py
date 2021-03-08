@@ -77,7 +77,7 @@ def test_get_relevant_commits(mocker):
     ]
 
     # When
-    result: [str] = create_release.get_relevant_commits(repo_mock)
+    result: [str] = create_release.get_relevant_commits(repo_mock, "1.2.3")
 
     # Then
     assert commit_mock1.message in result
@@ -95,7 +95,7 @@ def test_get_relevant_commits_empty(mocker):
     ]
 
     # When
-    result: [str] = create_release.get_relevant_commits(repo_mock)
+    result: [str] = create_release.get_relevant_commits(repo_mock, "1.2.3")
 
     # Then
     assert len(result) == 0
