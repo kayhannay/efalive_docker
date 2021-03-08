@@ -16,8 +16,9 @@ def create_release(path: str):
     print('Create release ...')
     repo = Repo(path)
 
-    (last_version_release, last_version_package) = f'{repo.tags[0]}'.split('-')
-    print(f'Latest tag is: {repo.tags[0]}')
+    latest_tag = repo.git.describe('--abbrev=0', '--tags')
+    (last_version_release, last_version_package) = f'{latest_tag}'.split('-')
+    print(f'Latest tag is: {latest_tag}')
 
     relevant_commits = get_relevant_commits(repo)
 
