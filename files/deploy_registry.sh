@@ -45,12 +45,12 @@ fi
 
 PACKAGE="${SOFTWARE}_${VERSION}_all.deb"
 
-rsync -rltv --delete -e 'ssh -o StrictHostKeyChecking=no' ${SSH_USER}@${SSH_HOST}:efalive.hannay.de/debian/ repository/
+rsync -rltv --delete -e 'ssh -o StrictHostKeyChecking=no' ${SSH_USER}@${SSH_HOST}:efalive/debian/ repository/
 
 cd repository
 reprepro remove $DISTRIBUTION $SOFTWARE
 reprepro -Vb . includedeb $DISTRIBUTION ../$PACKAGE
 cd ..
 
-rsync -rltv --delete -e 'ssh -o StrictHostKeyChecking=no' repository/ ${SSH_USER}@${SSH_HOST}:efalive.hannay.de/debian/
+rsync -rltv --delete -e 'ssh -o StrictHostKeyChecking=no' repository/ ${SSH_USER}@${SSH_HOST}:efalive/debian/
 
