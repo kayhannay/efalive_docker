@@ -4,17 +4,18 @@ from unittest import mock
 
 from git import Commit
 from create_release import create_release
+from create_release.create_release import ReleaseType
 
 
 def test_get_file_version(mocker):
     # Given
-    mocker.patch.object(builtins, 'open', mocker.mock_open(read_data='1.2.3-4'))
+    mocker.patch.object(builtins, 'open', mocker.mock_open(read_data='1.2.3'))
 
     # When
     result = create_release.get_file_version('/some/path')
 
     # Then
-    assert result == '1.2.3-4'
+    assert result == '1.2.3'
 
 
 def test_create_changelog_entry():
@@ -77,11 +78,33 @@ def test_get_relevant_commits(mocker):
     ]
 
     # When
-    result: [str] = create_release.get_relevant_commits(repo_mock, "1.2.3")
+    (commits, release_type) = create_release.get_relevant_commits(repo_mock, "1.2.3")
 
     # Then
+    assert release_type is ReleaseType.FEATURE
+    assert commit_mock1.message in commits
+    assert commit_mock3.message in commits
+    assert commit_mock2.message not in commits
+
+
+def test_get_relevant_commits_type_breaking(mocker):
+    # Given
+    commit_mock1: Commit = mocker.Mock()
+    commit_mock1.message = 'fix: do this and that\n\nfoo bar\n\nBREAKING CHANGE: foo'
+    commit_mock2: Commit = mocker.Mock()
+    commit_mock2.message = 'ci: do this and that'
+    repo_mock = mocker.patch('git.Repo').return_value
+    repo_mock.iter_commits.return_value = [
+        commit_mock1,
+        commit_mock2
+    ]
+
+    # When
+    (result, release_type) = create_release.get_relevant_commits(repo_mock, "1.2.3")
+
+    # Then
+    assert release_type is ReleaseType.BREAKING
     assert commit_mock1.message in result
-    assert commit_mock3.message in result
     assert commit_mock2.message not in result
 
 
@@ -95,7 +118,7 @@ def test_get_relevant_commits_empty(mocker):
     ]
 
     # When
-    result: [str] = create_release.get_relevant_commits(repo_mock, "1.2.3")
+    (result, _) = create_release.get_relevant_commits(repo_mock, "1.2.3")
 
     # Then
     assert len(result) == 0
@@ -141,3 +164,70 @@ def test_create_release_file(mocker):
     file_mock.assert_called_once_with('/some/path/release_info.sh', 'w')
     handle = file_mock()
     handle.write.assert_called_once_with('VERSION=1.2.3-4\nCREATE_RELEASE=true')
+
+
+def test_get_new_release_version_patch(mocker):
+    # Given
+    file_mock = mocker.patch('os.path.isfile')
+    file_mock.return_value = False
+
+    # When
+    result: str = create_release.get_new_release_version(
+        '2', '1.2.3', '.', create_release.ReleaseType.PATCH)
+
+    # Then
+    assert result == '1.2.4-1'
+
+
+def test_get_new_release_version_feature(mocker):
+    # Given
+    file_mock = mocker.patch('os.path.isfile')
+    file_mock.return_value = False
+
+    # When
+    result: str = create_release.get_new_release_version(
+        '2', '1.2.3', '.', create_release.ReleaseType.FEATURE)
+
+    # Then
+    assert result == '1.3.0-1'
+
+
+def test_get_new_release_version_breaking(mocker):
+    # Given
+    file_mock = mocker.patch('os.path.isfile')
+    file_mock.return_value = False
+
+    # When
+    result: str = create_release.get_new_release_version(
+        '2', '1.2.3', '.', create_release.ReleaseType.BREAKING)
+
+    # Then
+    assert result == '2.0.0-1'
+
+
+def test_get_new_release_version_file_new_package(mocker):
+    # Given
+    file_mock = mocker.patch('os.path.isfile')
+    file_mock.return_value = True
+    mocker.patch.object(builtins, 'open', mocker.mock_open(read_data='1.2.3'))
+
+    # When
+    result: str = create_release.get_new_release_version(
+        '2', '1.2.3', '/some/path', create_release.ReleaseType.NONE)
+
+    # Then
+    assert result == '1.2.3-3'
+
+
+def test_get_new_release_version_file_new_release(mocker):
+    # Given
+    file_mock = mocker.patch('os.path.isfile')
+    file_mock.return_value = True
+    mocker.patch.object(builtins, 'open', mocker.mock_open(read_data='1.3.0'))
+
+    # When
+    result: str = create_release.get_new_release_version(
+        '2', '1.2.3', '/some/path', create_release.ReleaseType.NONE)
+
+    # Then
+    assert result == '1.3.0-1'
