@@ -13,7 +13,7 @@ RUN echo "deb http://ftp.de.debian.org/debian buster main" > /etc/apt/sources.li
 RUN apt update \
     && apt install -y lftp rsync apt-cacher-ng vim git live-build texlive-lang-german texlive-latex-base texlive-latex-extra texlive-latex-recommended python3 python3-pip python3-pkgconfig docbook-to-man devscripts dpkg-dev reprepro sudo libgirepository1.0-dev libglib2.0-dev libcairo2-dev libffi-dev gir1.2-gtk-3.0 gir1.2-gudev-1.0
 
-RUN pip3 install pipenv /tmp/create_release-0.1.0-py3-none-any.whl
+RUN pip3 install pipenv poetry /tmp/create_release-0.1.0-py3-none-any.whl
 
 VOLUME ["/home/efalive/development"]
 
