@@ -25,7 +25,7 @@ def get_file_version(path: str) -> str:
         return version
 
 
-def create_release(path: str, dry_run: bool):
+def create_release(path: str, package: str, dry_run: bool):
     print('Create release ...')
     repo = Repo(path)
 
@@ -40,7 +40,7 @@ def create_release(path: str, dry_run: bool):
 
     if release_type is not ReleaseType.NONE:
         print(f'New release is: {new_release}')
-        changelog = create_changelog_entry(new_release, relevant_commits)
+        changelog = create_changelog_entry(package, new_release, relevant_commits)
         create_changelog(path, changelog)
         if not dry_run:
             create_tag(repo, new_release)
@@ -89,8 +89,8 @@ def create_tag(repo: Repo, version: str):
     repo.create_tag(version)
 
 
-def create_changelog_entry(version: str, commits: [str]):
-    changelog = f'efa2 ({version}) unstable; urgency=low\n\n'
+def create_changelog_entry(package: str, version: str, commits: [str]):
+    changelog = f'{package} ({version}) unstable; urgency=low\n\n'
     for commit in commits:
         changelog = f'{changelog}  * {commit}'
     date = datetime.now().astimezone().strftime('%a, %d %b %Y %H:%M:%S %z')
@@ -130,13 +130,16 @@ def get_relevant_commits(repo: Repo, latest_tag: str) -> [str]:
 @click.option('--path',
               required=True,
               help='Path to the Git repository')
+@click.option('--package',
+              required=True,
+              help='Name of the software package')
 @click.option('--dry',
               required=False,
               is_flag=True,
               help='Dry run, do not commit')
-def main(path: str, dry: bool = False):
-    create_release(path, dry)
+def main(path: str, package: str, dry: bool = False):
+    create_release(path, package, dry)
 
 
 if __name__ == '__main__':
-    main(None)
+    main(None, None)

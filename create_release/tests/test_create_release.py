@@ -26,15 +26,16 @@ def test_create_changelog_entry():
         fix_commit,
         feat_commit
     ]
+    package = 'some software'
     version = '1.2.3-1'
     date = datetime.now().astimezone().strftime('%a, %d %b %Y ')
-    expected_changelog = f'efa2 ({version}) unstable; urgency=low\n\n' + \
+    expected_changelog = f'{package} ({version}) unstable; urgency=low\n\n' + \
         f'  * {fix_commit}' + \
         f'  * {feat_commit}\n' + \
         f' -- Kay Hannay <klinux@hannay.de>  {date}'
 
     # When
-    result: str = create_release.create_changelog_entry(version, commits)
+    result: str = create_release.create_changelog_entry(package, version, commits)
 
     # Then
     assert expected_changelog in result
