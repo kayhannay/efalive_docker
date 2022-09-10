@@ -77,6 +77,8 @@ def create_release_file(path: str, version: str, release: str):
 
 
 def commit_and_push(repo: Repo, version: str):
+    repo.git.config('user.email', 'klinux@hannay.de')
+    repo.git.config('user.name', 'create_release')
     repo.git.add(".")
     repo.git.commit('-m',
                     f'ci: create release {version}',
