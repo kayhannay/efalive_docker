@@ -1,9 +1,9 @@
 #efaLive development Docker file
 
-Here you can find a Docker file that creates a development environment for efaLive. For more information about Docker, you can visit the [Docker pages](http://docker.io/). Information about efaLive can be found on [my homepage](http://www.hannay.de/index.php/efalive).
+Here you can find a Docker file that creates a development environment for efaLive. For more information about Docker, you can visit the [Docker pages](http://docker.io/). Information about efaLive can be found on [my homepage](https://www.hannay.de/en/efalive/).
 
 ##Binaries and documentation
-For more information about efaLive, have a look to the efaLive documentation on [my homepage](http://www.hannay.de/index.php/efalive). There you can also find efaLive CD images for download.
+For more information about efaLive, have a look to the efaLive documentation on [my homepage](https://www.hannay.de/en/efalive/). There you can also find efaLive CD images for download.
 
 ##Related projects
 * [Debian GNU/Linux project](http://www.debian.org/)
@@ -20,7 +20,7 @@ You need to have Docker installed on your system. To develop and build an efaLiv
 Change to the efaLive Docker project directory and run the following command:
 
 ```shell
-docker build -t efalive/efalive-dev:buster .
+docker build -t efalive/efalive-dev:bullseye .
 ```
 
 You of course might change the tag name in the command above to your wishes, it is just an example.
@@ -29,7 +29,7 @@ You of course might change the tag name in the command above to your wishes, it 
 Run the docker container by using the following command:
 
 ```shell
-docker run -it -v <PATH_TO_EFALIVE_REPOSITORIES>:/home/efalive/development --name efalive-dev --privileged=true efalive/efalive-dev:buster
+docker run -it -v <PATH_TO_EFALIVE_REPOSITORIES>:/home/efalive/development --name efalive-dev --privileged=true efalive/efalive-dev:bullseye
 ```
 
 Replace <PATH_TO_EFALIVE_REPOSITORIES> with the name of the folder where you have cloned or will clone the efaLive projects to. Again, you can replace the name for the container and the tag to whatever you want.
