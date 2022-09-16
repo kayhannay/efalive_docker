@@ -1,11 +1,11 @@
-#efaLive development Docker file
+# efaLive development Docker file
 
 Here you can find a Docker file that creates a development environment for efaLive. For more information about Docker, you can visit the [Docker pages](http://docker.io/). Information about efaLive can be found on [my homepage](https://www.hannay.de/en/efalive/).
 
-##Binaries and documentation
+## Binaries and documentation
 For more information about efaLive, have a look to the efaLive documentation on [my homepage](https://www.hannay.de/en/efalive/). There you can also find efaLive CD images for download.
 
-##Related projects
+## Related projects
 * [Debian GNU/Linux project](http://www.debian.org/)
 * [efaLive Docker](https://github.com/efalive/efalive_docker) - the Docker file to create an efaLive development environment (this project)
 * [efaLive CD](https://github.com/efalive/efalive_cd) - the live CD build configuration
@@ -13,10 +13,10 @@ For more information about efaLive, have a look to the efaLive documentation on 
 * [efa 2](https://github.com/efalive/efa2) - the Debian package configuration of the efa software
 * [efa](http://efa.nmichael.de/) - the rowing and canoeing log book software
 
-##Requirements
+## Requirements
 You need to have Docker installed on your system. To develop and build an efaLive image, you need to clone the efaLive Docker, efaLive CD, efaLive and efa 2 projects to some directory on your PC. This directory is used later on for the Docker container.
 
-##How to build
+## How to build
 Change to the efaLive Docker project directory and run the following command:
 
 ```shell
@@ -25,7 +25,7 @@ docker build -t efalive/efalive-dev:bullseye .
 
 You of course might change the tag name in the command above to your wishes, it is just an example.
 
-##How to run
+## How to run
 Run the docker container by using the following command:
 
 ```shell
