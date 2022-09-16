@@ -1,6 +1,9 @@
 from datetime import datetime
 import os
 from enum import Enum, unique
+import fileinput
+import re
+import sys
 
 import click
 from git import Repo
@@ -25,7 +28,7 @@ def get_file_version(path: str) -> str:
         return version
 
 
-def create_release(path: str, package: str, dry_run: bool):
+def create_release(path: str, package: str, dry_run: bool, efalive: bool):
     print('Create release ...')
     repo = Repo(path)
 
@@ -42,6 +45,9 @@ def create_release(path: str, package: str, dry_run: bool):
         print(f'New release is: {new_release}')
         changelog = create_changelog_entry(package, new_release, relevant_commits)
         create_changelog(path, changelog)
+        if efalive:
+            update_efalive_version(path, new_release)
+            update_pyproject_file(path, new_release)
         if not dry_run:
             create_tag(repo, new_release)
             commit_and_push(repo, new_release)
@@ -109,6 +115,22 @@ def create_changelog(path: str, entry: str):
         modified.write(new_changelog)
 
 
+def update_efalive_version(path: str, version: str):
+    efalive_version_file = os.path.join(path, 'files', 'etc', 'efalive_version')
+    new_version = version.split('-')[0]
+    with open(efalive_version_file, 'w') as version_file:
+        version_file.write(f'{new_version}')
+
+
+def update_pyproject_file(path: str, version: str):
+    pyproject_file = os.path.join(path, 'pyproject.toml')
+    new_version = version.split('-')[0]
+    for line in fileinput.input(pyproject_file, inplace=1):
+        if 'version = ' in line:
+            line = re.sub('version = ".*', f'version = "{new_version}"', line)
+        sys.stdout.write(line)
+
+
 def get_relevant_commits(repo: Repo, latest_tag: str) -> [str]:
     commits = repo.iter_commits(rev=f'{latest_tag}..HEAD')
     relevant_commits: [str] = []
@@ -139,8 +161,12 @@ def get_relevant_commits(repo: Repo, latest_tag: str) -> [str]:
               required=False,
               is_flag=True,
               help='Dry run, do not commit')
-def main(path: str, package: str, dry: bool = False):
-    create_release(path, package, dry)
+@click.option('--efalive',
+              required=False,
+              is_flag=True,
+              help='Update efaLive version files')
+def main(path: str, package: str, dry: bool = False, efalive: bool = False):
+    create_release(path, package, dry, efalive)
 
 
 if __name__ == '__main__':

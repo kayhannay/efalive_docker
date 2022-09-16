@@ -146,7 +146,10 @@ def test_commit_and_push(mocker):
     create_release.commit_and_push(repo_mock, version)
 
     # Then
-    expected_calls = [mock.call.git.add('.'),
+    expected_calls = [
+        mock.call.git.config('user.email', 'klinux@hannay.de'),
+        mock.call.git.config('user.name', 'create_release'),
+        mock.call.git.add('.'),
         mock.call.git.commit(
         '-m', f'ci: create release {version}', author='create_release <klinux@hannay.de>'),
         mock.call.git.push('-u', 'origin', 'HEAD:main'),
@@ -232,3 +235,16 @@ def test_get_new_release_version_file_new_release(mocker):
 
     # Then
     assert result == '1.3.0-1'
+
+
+def test_update_efalive_version(mocker):
+    # Given
+    file_mock = mocker.patch('builtins.open', mocker.mock_open())
+
+    # When
+    create_release.update_efalive_version('/some/path', '1.2.3-1')
+
+    # Then
+    file_mock.assert_called_once_with('/some/path/files/etc/efalive_version', 'w')
+    handle = file_mock()
+    handle.write.assert_called_once_with('1.2.3')
