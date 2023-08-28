@@ -21,7 +21,7 @@ You need to have Docker installed on your system. To develop and build an efaLiv
 You can download the Docker image or build it yourself. Change to the efaLive Docker project directory and run the following command:
 
 ```shell
-docker build -t efalive/efalive-dev:bullseye .
+docker build -t efalive/efalive-dev:bookworm .
 ```
 
 You of course might change the tag name in the command above to your wishes, it is just an example.
@@ -36,7 +36,7 @@ docker run -it -v <PATH_TO_EFALIVE_REPOSITORIES>:/home/efalive/development --nam
 or, if you have built the image locally:
 
 ```shell
-docker run -it -v <PATH_TO_EFALIVE_REPOSITORIES>:/home/efalive/development --name efalive-dev --privileged=true efalive/efalive-dev:bullseye
+docker run -it -v <PATH_TO_EFALIVE_REPOSITORIES>:/home/efalive/development --name efalive-dev --privileged=true efalive/efalive-dev:bookworm
 ```
 
 Replace <PATH_TO_EFALIVE_REPOSITORIES> with the name of the folder where you have cloned or will clone the efaLive projects to. Again, you can replace the name for the container and the tag to whatever you want.
