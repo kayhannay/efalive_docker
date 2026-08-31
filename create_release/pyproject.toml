@@ -6,12 +6,12 @@ authors = ["Kay Hannay <klinux@hannay.de>"]
 
 [tool.poetry.dependencies]
 python = "^3.12"
-click = "^8.3.3"
-gitpython = "^3.1.50"
+click = "^8.5.0"
+gitpython = "^3.1.61"
 
 [tool.poetry.dev-dependencies]
-pytest = "^9.0.3"
-pylint = "^4.0.5"
+pytest = "^9.1.1"
+pylint = "^4.0.8"
 pytest-mock = "^3.15.1"
 pytest-cov = "^7.1.0"
 
